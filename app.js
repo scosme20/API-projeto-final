@@ -1,24 +1,11 @@
-import  express  from "express";
-import userRoutes from   './Api/src/Routes/userRoutes.js';
+import  Express  from "express";
+const app = express();
+const port = 3000
 
 
-
-class app {
-    constructor() {
-        this.app = express();
-        this.middlewares();
-        this.routes();
-    }
-}
-
-middlewares(); {
-    this.app.use(express.urlencoded({ extended: true }));
-    this.express.use(express.json())
-}
+app.use(express.json());
 
 
-routes(); {
-  this.app.use('/', userRoutes());
-}
+app.listen(`Servidor rodando na porta ${port}`);
 
-export default new app().app;
+//CRUD - Create, Read,
