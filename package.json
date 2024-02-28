@@ -2,11 +2,11 @@
   "name": "api-projeto-final",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "Api/src/Server/server.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon app.js"
+    "dev": "nodemon Api/src/Server/server.js"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +20,7 @@
     "sucrase": "^3.35.0"
   },
   "dependencies": {
-    "sequelize": "^6.37.1"
+    "sequelize": "^6.37.1",
+    "sqlite3": "^5.1.7"
   }
 }
