@@ -14,7 +14,8 @@ const Company = db.define('Company', {
     },
     rating: {
         type: DataTypes.INTEGER,
-        validate: { min: 0, max: 10 },
+        validate: { min: 0, max: 5 },
+        defaultValue: 0,
         allowNull: false,
     },
     name: {

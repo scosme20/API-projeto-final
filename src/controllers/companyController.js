@@ -1,4 +1,5 @@
 import { Company } from '../models/Company.js'
+import bcrypt from "bcrypt"
 
 
 export default class companyController {
@@ -18,7 +19,7 @@ export default class companyController {
             return 
         }
 
-        const checkPassword = await bcrypt.compare(password, companies.password)
+        const checkPassword = await bcrypt.compare(password, company.password)
 
         if(!checkPassword){
             res.status(422).json({ message: 'Senha incorreta!'})
@@ -30,9 +31,9 @@ export default class companyController {
     }
 
     static async register(req, res){
-        const { name, email, password, category, confirmpassword } = req.body
+        const { name, email, category, password, confirmpassword } = req.body
 
-        if(!name || !email || !password || !category || !confirmpassword){
+        if(!name || !email || !category || !password || !confirmpassword){
             res.status(422).json({ message: 'Todos os campos são obrigatórios!'})
             return 
         }
@@ -42,7 +43,7 @@ export default class companyController {
             return 
         }
 
-        const checkIfCompanyExists = await Companies.findOne({where: {email:email}})
+        const checkIfCompanyExists = await Company.findOne({where: {email:email}})
 
         if(checkIfCompanyExists){
             res.status(422).json({ message: 'O email já está sendo utilizado!'})
@@ -64,7 +65,7 @@ export default class companyController {
 
             const createdCompany = await Company.create(company)
 
-            res.status(200).json({ user: createdCompany })
+            res.status(200).json({ company: createdCompany })
   
         } catch (error) {
             res.status(500).json({message: error})
@@ -101,21 +102,31 @@ export default class companyController {
 
         const id = req.params.id
 
-        const { name, email, category, password } = req.body
+        const { name, email, category, password, confirmpassword } = req.body
 
-        if(!name || !email ||  !category || !password ) {
+        if(!name || !email ||  !category ) {
             res.status(422).json({ message: 'Todos os campos são obrigatórios!'})
             return 
         }
 
         let company = await Company.findOne({where: {id:id}, raw: true})
 
-        if( name && name != company.name ){
+        if(!company){
+            res.status(422).json({ message: "empresa não encontrada! "})
+        }
+
+        console.log(company)
+
+        if(name != company.name ){
             company.name = name
         }
 
-        if(email && email != company.email ){
+        if(email != company.email ){
             company.email = email
+        }
+
+        if(category != company.category ){
+            company.category = category
         }
 
         const CheckIfCompanyExists = await Company.findOne({ where: {email: email}})
@@ -126,15 +137,19 @@ export default class companyController {
             })
         }
 
-        if(password){
-            const salt = bcrypt.genSaltSync(10);
-            const hashPassword = bcrypt.hashSync(password, salt);
-            company.password = hashPassword
+        if(password != confirmpassword){
+            res.status(422).json({ message: 'As senhas não conferem!'})
+            return 
+        } else if(password === confirmpassword && password != null) {
+            const salt = await bcrypt.genSalt(12)
+            const passwordHash = await bcrypt.hash(password, salt)
+
+            company.password = passwordHash
         }
         
         try {
             await Company.update(company, {where: {id:id}})
-            res.status(201).json({ company })
+            res.status(201).json({ company: company })
         } catch (error) {
             console.log('Aconteceu um erro: ' + error)
         }
@@ -155,7 +170,7 @@ export default class companyController {
 
             await Company.destroy({where: {id:id}})
 
-            res.status(200).json({message: 'empresa deletado com sucesso!'})
+            res.status(200).json({message: 'empresa deletada com sucesso!'})
 
         } catch (error) {
             res.status(500).json({ message: error })

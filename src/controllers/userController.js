@@ -112,20 +112,20 @@ export default class userController {
 
         const id = req.params.id
 
-        const { name, email, password } = req.body
+        const { name, email, password, confirmpassword} = req.body
 
         let user = await User.findOne({where: {id:id}, raw: true})
 
-        if(!name || !email || !password){
+        if(!name || !email){
             res.status(422).json({ message: 'Todos os campos são obrigatórios!'})
             return 
         }
 
-        if( name && name != user.name ){
+        if(name != user.name ){
             user.name = name
         }
 
-        if(email && email != user.email ){
+        if(email != user.email ){
             user.email = email
         }
 
@@ -137,10 +137,14 @@ export default class userController {
             })
         }
 
-        if(password){
-            const salt = bcrypt.genSaltSync(10);
-            const hashPassword = bcrypt.hashSync(password, salt);
-            user.password = hashPassword
+        if(password != confirmpassword){
+            res.status(422).json({ message: 'As senhas não conferem!'})
+            return 
+        } else if(password === confirmpassword && password != null) {
+            const salt = await bcrypt.genSalt(12)
+            const passwordHash = await bcrypt.hash(password, salt)
+
+            user.password = passwordHash
         }
         
         try {
@@ -155,7 +159,7 @@ export default class userController {
     }
 
     static async removeUser(req, res){
-        const id = req.body.id
+        const id = req.params.id
 
         if(!id){
             res.status(422).json({ message: 'O id é obrigatório!'})
