@@ -22,4 +22,4 @@ const User = db.define('User', {
     }
 })
 
-export { User }
+export default User;

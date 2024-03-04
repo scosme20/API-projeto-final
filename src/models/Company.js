@@ -32,4 +32,4 @@ const Company = db.define('Company', {
      }
 })
 
-export { Company }
+export default Company;
