@@ -1,5 +1,6 @@
-import { Company } from '../models/Company.js'
+import Company from '../models/Company.js'
 import bcrypt from "bcrypt"
+import { Review } from '../models/Review.js'
 
 
 export default class companyController {
@@ -84,15 +85,19 @@ export default class companyController {
         }
 
         try {
-            const company = await Company.findByPk(id)
+            const company = await Company.findByPk(id);
             if(!company){
                 res.status(422).json({ message: 'empresa não encontrada!'})
                 return 
             }
 
             company.password = undefined
+
+            const reviews = await company.getReviews();
+
+            company.rating = reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length
     
-            res.status(200).json({ company })
+            res.status(200).json({ company, reviews })
         } catch (error) {
             res.status(500).json({ message: error })
         }
