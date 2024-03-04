@@ -75,7 +75,9 @@ export default class userController {
 
             const createdUser = await User.create(user)
 
-            res.status(200).json({ user: createdUser })
+            if(createdUser){
+                res.status(200).json({ id: createdUser.id, name: createdUser.name, email: createdUser.email })
+            }
   
         } catch (error) {
             res.status(500).json({message: error})
@@ -94,7 +96,7 @@ export default class userController {
         }
 
         try {
-            const user = await User.findByPk(id)
+            const user = await User.findByPk(id, {attributes: {exclude: ["password"]}})
             if(!user){
                 res.status(422).json({ message: 'Usuário não encontrado!'})
                 return 
