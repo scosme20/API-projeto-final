@@ -95,6 +95,8 @@ export default class userController {
             return 
         }
 
+        console.log(id)
+
         try {
             const user = await User.findByPk(id, {attributes: {exclude: ["password"]}})
             if(!user){
