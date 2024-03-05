@@ -1,84 +1,92 @@
-import { Review } from "../models/Review.js";
+import Review from "../models/Review.js";
 
 export default class ReviewController {
 
     static async addReview(req, res) {
         const { rating, comment, UserId, CompanyId } = req.body;
 
-        if ( !rating || !comment) {
+        if ( !rating || !comment || !UserId || !CompanyId) {
             res.status(422).json({ message: 'Todos os campos são obrigatórios!' });
             return;
         }
 
-        try {
-            const review = await Review.create({
-                rating,
-                comment,
-                UserId,
-                CompanyId
-            });
+        const review = {
+            rating,
+            comment,
+            UserId,
+            CompanyId
+        }
 
-            res.status(201).json({ review });
+        console.log(review)
+
+        try {
+            const createdReview = await Review.create(review);
+
+            console.log(createdReview)
+
+            res.status(201).json({ createdReview });
         } catch (error) {
             res.status(500).json({ message: error });
         }
     }
 
-    static async getReviewsByUserId(req, res) {
-        const userId = req.params.userId;
+    static async getReviewById(req, res) {
+        const id = req.params.id;
 
-        if (!userId) {
-            res.status(422).json({ message: 'O userId é obrigatório!' });
+        console.log(id)
+
+        if (!id) {
+            res.status(422).json({ message: 'O id é obrigatório!' });
             return;
         }
 
         try {
-            const reviews = await Review.findAll({ where: { userId } });
+            const review = await Review.findByPk(id);
 
-            res.status(200).json({ reviews });
+            res.status(200).json({ review });
         } catch (error) {
             res.status(500).json({ message: error });
         }
     }
 
     static async editReview(req, res) {
-        const reviewId = req.params.reviewId;
+        const id = req.params.id;
         const { rating, comment } = req.body;
 
-        if (!reviewId || !rating || !comment) {
+        if (!id || !rating || !comment) {
             res.status(422).json({ message: 'Todos os campos são obrigatórios!' });
             return;
         }
 
         try {
-            const existingReview = await Review.findByPk(reviewId);
+            const review = await Review.findByPk(id);
 
-            if (!existingReview) {
+            if (!review) {
                 res.status(422).json({ message: 'Avaliação não encontrada!' });
                 return;
             }
 
-            existingReview.rating = rating;
-            existingReview.comment = comment;
+            review.rating = rating;
+            review.comment = comment;
 
-            await existingReview.save();
+            await review.save();
 
-            res.status(200).json({ review: existingReview });
+            res.status(200).json({ review });
         } catch (error) {
             res.status(500).json({ message: error });
         }
     }
 
-    static async removeReview(req, res) {
-        const reviewId = req.params.reviewId;
+    static async removeReviewById(req, res) {
+        const id = req.params.id;
 
-        if (!reviewId) {
+        if (!id) {
             res.status(422).json({ message: 'O reviewId é obrigatório!' });
             return;
         }
 
         try {
-            await Review.destroy({ where: { id: reviewId } });
+            await Review.destroy({ where: { id: id } });
 
             res.status(200).json({ message: 'Avaliação removida com sucesso!' });
         } catch (error) {

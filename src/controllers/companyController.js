@@ -1,6 +1,6 @@
 import Company from '../models/Company.js'
 import bcrypt from "bcrypt"
-import { Review } from '../models/Review.js'
+import Review from '../models/Review.js'
 
 
 export default class companyController {
@@ -85,19 +85,21 @@ export default class companyController {
         }
 
         try {
-            const company = await Company.findByPk(id);
+            const company = await Company.findByPk(id, {
+                attributes: { exclude: ['password']},
+                include: Review
+            });
+            
             if(!company){
                 res.status(422).json({ message: 'empresa não encontrada!'})
                 return 
             }
 
-            company.password = undefined
-
-            const reviews = await company.getReviews();
-
-            company.rating = reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length
+            if(company.Reviews.length){
+                company.rating = company.Reviews.reduce((acc, review) => acc + review.rating, 0) / company.Reviews.length
+            }
     
-            res.status(200).json({ company, reviews })
+            res.status(200).json({ company })
         } catch (error) {
             res.status(500).json({ message: error })
         }
@@ -163,7 +165,7 @@ export default class companyController {
 
     }
 
-    static async removeById(req, res){
+    static async removeCompanyById(req, res){
         const id = req.params.id
 
         if(!id){

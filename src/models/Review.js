@@ -27,4 +27,4 @@ Review.belongsTo(User)
 Company.hasMany(Review)
 User.hasMany(Review)
 
-export { Company, User, Review };
+export default Review

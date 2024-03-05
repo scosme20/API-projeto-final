@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt"
+import Review from "../models/Review.js";
 
 export default class userController {
 
@@ -98,7 +99,12 @@ export default class userController {
         console.log(id)
 
         try {
-            const user = await User.findByPk(id, {attributes: {exclude: ["password"]}})
+            const user = await User.findByPk(id, 
+                {
+                    attributes: {exclude: ["password"]},
+                    include: Review
+                })
+
             if(!user){
                 res.status(422).json({ message: 'Usuário não encontrado!'})
                 return 
@@ -162,7 +168,7 @@ export default class userController {
 
     }
 
-    static async removeUser(req, res){
+    static async removeUserById(req, res){
         const id = req.params.id
 
         if(!id){

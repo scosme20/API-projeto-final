@@ -3,10 +3,10 @@ import userController from "../controllers/userController.js";
 
 const userRouter = Router()
 
-userRouter.post('/register', userController.register)
-userRouter.post('/login', userController.login)
-userRouter.get('/:id', userController.getUserById)
-userRouter.put('/:id', userController.edit)
-userRouter.delete('/:id', userController.removeUser)
+userRouter.post('/auth/register', userController.register)
+userRouter.post('/auth/login', userController.login)
+userRouter.get('/users/:id', userController.getUserById)
+userRouter.put('/users/:id', userController.edit)
+userRouter.delete('/users/:id', userController.removeUserById)
 
-export { userRouter }
+export default userRouter;
