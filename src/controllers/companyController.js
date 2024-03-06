@@ -1,7 +1,7 @@
 import Company from '../models/Company.js'
 import bcrypt from "bcrypt"
 import Review from '../models/Review.js'
-
+import Products from '../models/Products.js'
 
 class CompanyController {
 
@@ -87,7 +87,8 @@ class CompanyController {
         try {
             const company = await Company.findByPk(id, {
                 attributes: { exclude: ['password']},
-                include: Review
+                include: Review,
+                include: Products
             });
             
             if(!company){
