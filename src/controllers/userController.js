@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt"
 import Review from "../models/Review.js";
+import { hideUserPassword } from "../helpers/helpers.js";
 
 class UserController {
 
@@ -74,13 +75,9 @@ class UserController {
 
         try {
             const createdUser = await User.create(user)
-
-            if(createdUser){
-                res.status(201).json({ id: createdUser.id, name: createdUser.name, email: createdUser.email, createdAt: createdUser.createdAt, updatedAt: createdUser.updatedAt })
-            }
-  
+            res.status(201).json(hideUserPassword(createdUser))
         } catch (error) {
-            res.status(500).json({message: "Ocorreu um erro ao cadastrar o usuário, por favor, tente mais tarde."})
+            res.status(500).json({message: "Ocorreu um erro ao cadastrar o usuário, por favor, tente novamente mais tarde."})
         }
 
 
@@ -98,14 +95,14 @@ class UserController {
                 })
 
             if(!user){
-                res.status(404).json({ message: "Esse usuário não foi encontrado!"})
+                res.status(404).json({ message: "Não foi possível localizar esse usuário!"})
                 return 
             }
     
             res.status(200).json({ user })
 
         } catch (error) {
-            res.status(500).json({ message: "Ocorreu um erro ao obter o usuário, por favor, tente mais tarde." })
+            res.status(500).json({ message: "Ocorreu um erro ao obter o usuário, por favor, tente novamente mais tarde." })
         }
     }
 
@@ -153,7 +150,7 @@ class UserController {
             res.status(201).json({ user })
 
         } catch (error) {
-            res.status(500).json({ message: "Ocorreu um erro ao editar esse usuário, por favor, tente mais tarde." })
+            res.status(500).json({ message: "Ocorreu um erro ao editar esse usuário, por favor, tente novamente mais tarde." })
         }
 
     
@@ -168,7 +165,7 @@ class UserController {
 
             res.status(200).json({message: "O usuário foi removido com sucesso!"})
         } catch (error) {
-            res.status(500).json({ message: "Ocorreu um erro ao remover o usuário, por favor, tente mais tarde." })
+            res.status(500).json({ message: "Ocorreu um erro ao remover o usuário, por favor, tente novamente mais tarde." })
         }
     }
 

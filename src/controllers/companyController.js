@@ -2,6 +2,7 @@ import Company from '../models/Company.js'
 import bcrypt from "bcrypt"
 import Review from '../models/Review.js'
 import Product from '../models/Product.js'
+import { hideCompanyPassword } from '../helpers/helpers.js'
 
 class CompanyController {
 
@@ -66,10 +67,10 @@ class CompanyController {
 
             const createdCompany = await Company.create(company)
 
-            res.status(201).json({ company: createdCompany })
+            res.status(201).json(hideCompanyPassword(createdCompany))
   
         } catch (error) {
-            res.status(500).json({message: "Ocorreu um erro ao cadastrar esta empresa, por favor, tente mais tarde."})
+            res.status(500).json({message: "Ocorreu um erro ao cadastrar esta empresa, por favor, tente novamente mais tarde."})
         }
 
 
@@ -96,7 +97,7 @@ class CompanyController {
     
             res.status(200).json({ company })
         } catch (error) {
-            res.status(500).json({ message: "Ocorreu um erro ao obter esta empresa, por favor, tente mais tarde." })
+            res.status(500).json({ message: "Ocorreu um erro ao obter esta empresa, por favor, tente novamente mais tarde." })
         }
     }
 
@@ -145,7 +146,7 @@ class CompanyController {
             await Company.update(company, {where: {id:id}})
             res.status(201).json({ company: company })
         } catch (error) {
-            res.status(500).json({ message: "Ocorreu um erro ao editar a empresa, por favor, tente mais tarde."})
+            res.status(500).json({ message: "Ocorreu um erro ao editar a empresa, por favor, tente novamente mais tarde."})
         }
 
     
@@ -162,7 +163,7 @@ class CompanyController {
             res.status(200).json({message: 'empresa removida com sucesso!'})
 
         } catch (error) {
-            res.status(500).json({ message: "Ocorreu um erro ao remover essa empresa, por favor, tente mais tarde." })
+            res.status(500).json({ message: "Ocorreu um erro ao remover essa empresa, por favor, tente novamente mais tarde." })
         }
     } 
 }

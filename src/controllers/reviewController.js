@@ -21,7 +21,7 @@ class ReviewController {
 
             res.status(201).json({ createdReview });
         } catch (error) {
-            res.status(500).json({ message: error });
+            res.status(500).json({ message: "Ocorreu um erro a criar a avaliação, por favor, tente novamente mais tarde." });
         }
     }
 
@@ -39,7 +39,7 @@ class ReviewController {
             res.status(200).json({ review });
 
         } catch (error) {
-            res.status(500).json({ message: 'Ocorreu um erro ao obter a avalição, por favor, tente mais tarde.' });
+            res.status(500).json({ message: 'Ocorreu um erro ao obter a avalição, por favor, tente novamente mais tarde.' });
         }
     }
 
@@ -68,7 +68,7 @@ class ReviewController {
 
             res.status(200).json({ review });
         } catch (error) {
-            res.status(500).json({ message: 'Ocorreu um erro ao editar a avaliação, por favor, tente mais tarde.' });
+            res.status(500).json({ message: 'Ocorreu um erro ao editar a avaliação, por favor, tente novamente mais tarde.' });
         }
     }
 
@@ -80,7 +80,7 @@ class ReviewController {
 
             res.status(200).json({ message: 'A avaliação foi removida com sucesso!' });
         } catch (error) {
-            res.status(500).json({ message: 'Ocorreu um erro ao remover a avaliação, por favor, tente mais tarde.' });
+            res.status(500).json({ message: 'Ocorreu um erro ao remover a avaliação, por favor, tente novamente mais tarde.' });
         }
     }
 
