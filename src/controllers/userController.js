@@ -90,11 +90,6 @@ class UserController {
     static async getUserById(req, res){
         const { id } = req.params
 
-        if (!id) {
-            res.status(422).json({ message: "Por favor, informe um id válido!" });
-            return;
-        }
-
         try {
             const user = await User.findByPk(id, 
                 {

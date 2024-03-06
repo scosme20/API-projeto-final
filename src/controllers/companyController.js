@@ -1,7 +1,7 @@
 import Company from '../models/Company.js'
 import bcrypt from "bcrypt"
 import Review from '../models/Review.js'
-import Products from '../models/Products.js'
+import Product from '../models/Product.js'
 
 class CompanyController {
 
@@ -79,16 +79,10 @@ class CompanyController {
     static async getCompanyById(req, res){
         const { id } = req.params
 
-        if (!id) {
-            res.status(422).json({ message: "Por favor, informe um id válido!" });
-            return;
-        }
-
         try {
             const company = await Company.findByPk(id, {
                 attributes: { exclude: ['password']},
-                include: Review,
-                include: Products
+                include: [Review, Product]
             });
             
             if(!company){

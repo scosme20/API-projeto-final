@@ -41,11 +41,6 @@ class ProductController {
     static async getProductById(req, res) {
         const { id } = req.params;
 
-        if (!id) {
-            res.status(422).json({ message: "Por favor, informe um id válido!" });
-            return;
-        }
-
         try {
             
             const product = await Product.findByPk(id);

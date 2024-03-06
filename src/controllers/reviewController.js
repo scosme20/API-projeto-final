@@ -28,11 +28,6 @@ class ReviewController {
     static async getReviewById(req, res) {
         const id = req.params.id;
 
-        if (!id) {
-            res.status(422).json({ message: 'Por favor, informe um id válido!' });
-            return;
-        }
-
         try {
             const review = await Review.findByPk(id);
 
