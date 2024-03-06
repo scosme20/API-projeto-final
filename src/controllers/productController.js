@@ -17,16 +17,12 @@ class ProductController {
             CompanyId
         }
 
-        console.log(product)
-
         try {
             const createdProduct = await Product.create(product)
 
-            console.log(createdProduct)
-
             res.status(201).json({ createdProduct });
         } catch (error) {
-            res.status(500).json({ message: error });
+            res.status(500).json({ message: "Ocorreu um erro ao cadastrar esse produto, por favor, tente mais tarde." });
         }
 
     }
@@ -38,42 +34,38 @@ class ProductController {
                 products
             })
         } catch (error) {
-            
+            res.status(500).json({ message: "Ocorreu um erro ao obter os produtos, por favor, tente mais tarde." })
         }
     }
 
     static async getProductById(req, res) {
-        const id = req.params.id;
-
-        console.log(id)
+        const { id } = req.params;
 
         if (!id) {
-            res.status(422).json({ message: 'O id é obrigatório!' });
-            return;
-        }
-
-        const product = await Product.findByPk(id);
-
-        if(!product) {
-            res.status(422).json({ message: 'Esse produto não existe!' });
+            res.status(422).json({ message: "Por favor, informe um id válido!" });
             return;
         }
 
         try {
             
+            const product = await Product.findByPk(id);
 
+            if(!product) {
+                res.status(422).json({ message: 'Esse produto não foi encontrado!' });
+                return;
+            }
             res.status(200).json({ product });
         } catch (error) {
-            res.status(500).json({ message: error });
+            res.status(500).json({ message: "Ocorreu um erro ao obter esse produto, por favor, tente mais tarde." });
         }
     }
 
     static async editProductById(req, res) {
-        const id = req.params.id;
+        const { id } = req.params;
         const { title, qty, price, description } = req.body;
 
-        if (!id || !title || !qty || !price || !description) {
-            res.status(422).json({ message: 'Todos os campos são obrigatórios!' });
+        if (!title || !qty || !price || !description) {
+            res.status(422).json({ message: "Todos os campos são obrigatórios!" });
             return;
         }
 
@@ -81,7 +73,7 @@ class ProductController {
             const product = await Product.findByPk(id);
 
             if (!product) {
-                res.status(422).json({ message: 'Produto não encontrado!' });
+                res.status(422).json({ message: "Não foi possível localizar este produto!" });
                 return;
             }
             
@@ -92,26 +84,21 @@ class ProductController {
 
             await product.save();
 
-            res.status(200).json({ product });
+            res.status(201).json({ product });
         } catch (error) {
-            res.status(500).json({ message: error });
+            res.status(500).json({ message: "Ocorreu um erro ao editar o produto, por favor, tente mais tarde." });
         }
     }
 
     static async removeProductById(req, res) {
-        const id = req.params.id;
-
-        if (!id) {
-            res.status(422).json({ message: 'O Id é obrigatório!' });
-            return;
-        }
+        const { id } = req.params;
 
         try {
             await Product.destroy({ where: { id: id } });
 
-            res.status(200).json({ message: 'Produto removido com sucesso!' });
+            res.status(200).json({ message: "O produto foi removido com sucesso!" });
         } catch (error) {
-            res.status(500).json({ message: error });
+            res.status(500).json({ message: "Ocorreu um erro ao remover o produto, por favor, tente mais tarde." });
         }
     }
 }

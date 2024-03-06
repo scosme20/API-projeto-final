@@ -9,21 +9,21 @@ class CompanyController {
         const { email, password} = req.body
 
         if(!email || !password){
-            res.status(422).json({ message: 'Todos os campos são obrigatórios!'})
+            res.status(422).json({ message: "Todos os campos são obrigatórios!"})
             return 
         }
 
         const company = await Company.findOne({where: {email:email}})
 
         if(!company){
-            res.status(422).json({ message: 'Não há empresa cadastrada com esse email!'})
+            res.status(422).json({ message: "Nenhuma empresa foi localizada com esse email!"})
             return 
         }
 
         const checkPassword = await bcrypt.compare(password, company.password)
 
         if(!checkPassword){
-            res.status(422).json({ message: 'Senha incorreta!'})
+            res.status(422).json({ message: "Senha incorreta!"})
             return 
         }
 
@@ -47,7 +47,7 @@ class CompanyController {
         const checkIfCompanyExists = await Company.findOne({where: {email:email}})
 
         if(checkIfCompanyExists){
-            res.status(422).json({ message: 'O email já está sendo utilizado!'})
+            res.status(422).json({ message: 'Esse email já está sendo utilizado!'})
             return 
         }
 
@@ -66,10 +66,10 @@ class CompanyController {
 
             const createdCompany = await Company.create(company)
 
-            res.status(200).json({ company: createdCompany })
+            res.status(201).json({ company: createdCompany })
   
         } catch (error) {
-            res.status(500).json({message: error})
+            res.status(500).json({message: "Ocorreu um erro ao cadastrar esta empresa, por favor, tente mais tarde."})
         }
 
 
@@ -77,11 +77,11 @@ class CompanyController {
     }
 
     static async getCompanyById(req, res){
-        const id = req.params.id
+        const { id } = req.params
 
-        if(!id){
-            res.status(422).json({ message: 'O id é obrigatório!'})
-            return 
+        if (!id) {
+            res.status(422).json({ message: "Por favor, informe um id válido!" });
+            return;
         }
 
         try {
@@ -91,7 +91,7 @@ class CompanyController {
             });
             
             if(!company){
-                res.status(422).json({ message: 'empresa não encontrada!'})
+                res.status(422).json({ message: 'Nenhuma empresa foi localizada!'})
                 return 
             }
 
@@ -101,40 +101,28 @@ class CompanyController {
     
             res.status(200).json({ company })
         } catch (error) {
-            res.status(500).json({ message: error })
+            res.status(500).json({ message: "Ocorreu um erro ao obter esta empresa, por favor, tente mais tarde." })
         }
     }
 
     static async editCompnayById(req, res){
 
-        const id = req.params.id
+        const { id } = req.params;
 
-        const { name, email, category, password, confirmpassword } = req.body
+        const { name, email, category, password, confirmpassword} = req.body
+
+        let company = await Company.findByPk(id)
+
+        if(!company){
+            res.status(422).json({ message: "Não foi possível localizar essa empresa! "})
+        }
 
         if(!name || !email ||  !category ) {
             res.status(422).json({ message: 'Todos os campos são obrigatórios!'})
             return 
         }
 
-        let company = await Company.findOne({where: {id:id}, raw: true})
 
-        if(!company){
-            res.status(422).json({ message: "empresa não encontrada! "})
-        }
-
-        console.log(company)
-
-        if(name != company.name ){
-            company.name = name
-        }
-
-        if(email != company.email ){
-            company.email = email
-        }
-
-        if(category != company.category ){
-            company.category = category
-        }
 
         const CheckIfCompanyExists = await Company.findOne({ where: {email: email}})
 
@@ -143,6 +131,10 @@ class CompanyController {
                 message: 'O email já foi cadastrado!'
             })
         }
+
+        company.name = name
+        company.email = email
+        company.category = category
 
         if(password != confirmpassword){
             res.status(422).json({ message: 'As senhas não conferem!'})
@@ -158,7 +150,7 @@ class CompanyController {
             await Company.update(company, {where: {id:id}})
             res.status(201).json({ company: company })
         } catch (error) {
-            console.log('Aconteceu um erro: ' + error)
+            res.status(500).json({ message: "Ocorreu um erro ao editar a empresa, por favor, tente mais tarde."})
         }
 
     
@@ -166,21 +158,16 @@ class CompanyController {
     }
 
     static async removeCompanyById(req, res){
-        const id = req.params.id
-
-        if(!id){
-            res.status(422).json({ message: 'O id é obrigatório!'})
-            return 
-        }
+        const { id } = req.params;
 
         try {
 
             await Company.destroy({where: {id:id}})
 
-            res.status(200).json({message: 'empresa deletada com sucesso!'})
+            res.status(200).json({message: 'empresa removida com sucesso!'})
 
         } catch (error) {
-            res.status(500).json({ message: error })
+            res.status(500).json({ message: "Ocorreu um erro ao remover essa empresa, por favor, tente mais tarde." })
         }
     } 
 }

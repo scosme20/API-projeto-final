@@ -1,5 +1,4 @@
 import Review from "../models/Review.js";
-
 class ReviewController {
 
     static async createReview(req, res) {
@@ -17,12 +16,8 @@ class ReviewController {
             CompanyId
         }
 
-        console.log(review)
-
         try {
             const createdReview = await Review.create(review);
-
-            console.log(createdReview)
 
             res.status(201).json({ createdReview });
         } catch (error) {
@@ -34,42 +29,42 @@ class ReviewController {
         const id = req.params.id;
 
         if (!id) {
-            res.status(422).json({ message: 'O id é obrigatório!' });
-            return;
-        }
-
-        const review = await Review.findByPk(id);
-
-        if(!review){
-            res.status(404).json({ message: 'A avaliação não encontrada!' });
-            return;
-        }
-
-        try {
-
-            res.status(200).json({ review });
-            
-        } catch (error) {
-            res.status(500).json({ message: error });
-        }
-    }
-
-    static async editReviewById(req, res) {
-        const id = req.params.id;
-        const { rating, comment } = req.body;
-
-        if (!id || !rating || !comment) {
-            res.status(422).json({ message: 'Todos os campos são obrigatórios!' });
+            res.status(422).json({ message: 'Por favor, informe um id válido!' });
             return;
         }
 
         try {
             const review = await Review.findByPk(id);
 
-            if (!review) {
-                res.status(422).json({ message: 'Avaliação não encontrada!' });
+            if(!review){
+                res.status(404).json({ message: 'Essa avaliação não foi encontrada!' });
                 return;
             }
+
+            res.status(200).json({ review });
+
+        } catch (error) {
+            res.status(500).json({ message: 'Ocorreu um erro ao obter a avalição, por favor, tente mais tarde.' });
+        }
+    }
+
+    static async editReviewById(req, res) {
+        const { id } = req.params;
+        const { rating, comment } = req.body;
+
+        const review = await Review.findByPk(id);
+
+        if (!review) {
+            res.status(404).json({ message: 'Não foi possível localizar esta avaliação!' });
+            return;
+        }
+
+        if (!rating || !comment) {
+            res.status(422).json({ message: 'Todos os campos são obrigatórios!' });
+            return;
+        }
+
+        try {
 
             review.rating = rating;
             review.comment = comment;
@@ -78,24 +73,19 @@ class ReviewController {
 
             res.status(200).json({ review });
         } catch (error) {
-            res.status(500).json({ message: error });
+            res.status(500).json({ message: 'Ocorreu um erro ao editar a avaliação, por favor, tente mais tarde.' });
         }
     }
 
     static async removeReviewById(req, res) {
-        const id = req.params.id;
-
-        if (!id) {
-            res.status(422).json({ message: 'O reviewId é obrigatório!' });
-            return;
-        }
+        const { id } = req.params;
 
         try {
             await Review.destroy({ where: { id: id } });
 
-            res.status(200).json({ message: 'Avaliação removida com sucesso!' });
+            res.status(200).json({ message: 'A avaliação foi removida com sucesso!' });
         } catch (error) {
-            res.status(500).json({ message: error });
+            res.status(500).json({ message: 'Ocorreu um erro ao remover a avaliação, por favor, tente mais tarde.' });
         }
     }
 
