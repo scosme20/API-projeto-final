@@ -1,12 +1,12 @@
 import { Router } from "express";
-import companyController from '../controllers/companyController.js';
+import CompanyController from '../controllers/CompanyController.js';
 
 const companyRouter = Router()
 
-companyRouter.post('/register', companyController.register)
-companyRouter.post('/login', companyController.login)
-companyRouter.get('/:id', companyController.getCompanyById)
-companyRouter.put('/:id', companyController.edit)
-companyRouter.delete('/:id', companyController.removeCompanyById)
+companyRouter.post('/auth/signup', CompanyController.signUp)
+companyRouter.post('/auth/signin', CompanyController.signIn)
+companyRouter.get('/:id', CompanyController.getCompanyById)
+companyRouter.put('/:id', CompanyController.editCompnayById)
+companyRouter.delete('/:id', CompanyController.removeCompanyById)
 
 export default companyRouter 

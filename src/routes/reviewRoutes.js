@@ -1,11 +1,11 @@
 import { Router } from "express";
-import reviewController from "../controllers/reviewController.js";
+import ReviewController from "../controllers/ReviewController.js";
 
 const reviewRouter = Router();
 
-reviewRouter.post('/add', reviewController.addReview);
-reviewRouter.get('/:id', reviewController.getReviewById);
-reviewRouter.put('/:id', reviewController.editReview);
-reviewRouter.delete('/:id', reviewController.removeReviewById);
+reviewRouter.post('/create/new', ReviewController.createReview);
+reviewRouter.get('/:id', ReviewController.getReviewById);
+reviewRouter.put('/:id', ReviewController.editReviewById);
+reviewRouter.delete('/:id', ReviewController.removeReviewById);
 
 export default reviewRouter;

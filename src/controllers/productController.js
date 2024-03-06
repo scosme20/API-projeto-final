@@ -1,8 +1,8 @@
 import Product  from "../models/Product.js";
 
-export default class ProductController {
+class ProductController {
 
-    static async addProduct(req, res) {
+    static async createProduct(req, res) {
         const { title, qty, price, description, CompanyId } = req.body;
 
         if ( !title || !qty || !price || !description || !CompanyId) {
@@ -68,7 +68,7 @@ export default class ProductController {
         }
     }
 
-    static async editProduct(req, res) {
+    static async editProductById(req, res) {
         const id = req.params.id;
         const { title, qty, price, description } = req.body;
 
@@ -115,3 +115,5 @@ export default class ProductController {
         }
     }
 }
+
+export default ProductController;

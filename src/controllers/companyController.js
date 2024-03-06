@@ -3,9 +3,9 @@ import bcrypt from "bcrypt"
 import Review from '../models/Review.js'
 
 
-export default class companyController {
+class CompanyController {
 
-    static async login(req, res){
+    static async signIn(req, res){
         const { email, password} = req.body
 
         if(!email || !password){
@@ -31,7 +31,7 @@ export default class companyController {
 
     }
 
-    static async register(req, res){
+    static async signUp(req, res){
         const { name, email, category, password, confirmpassword } = req.body
 
         if(!name || !email || !category || !password || !confirmpassword){
@@ -105,7 +105,7 @@ export default class companyController {
         }
     }
 
-    static async edit(req, res){
+    static async editCompnayById(req, res){
 
         const id = req.params.id
 
@@ -182,6 +182,7 @@ export default class companyController {
         } catch (error) {
             res.status(500).json({ message: error })
         }
-    }
-    
+    } 
 }
+
+export default CompanyController;

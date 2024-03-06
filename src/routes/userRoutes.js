@@ -1,12 +1,12 @@
 import { Router } from "express";
-import userController from "../controllers/userController.js";
+import UserController from "../controllers/UserController.js";
 
 const userRouter = Router()
 
-userRouter.post('/auth/register', userController.register)
-userRouter.post('/auth/login', userController.login)
-userRouter.get('/users/:id', userController.getUserById)
-userRouter.put('/users/:id', userController.edit)
-userRouter.delete('/users/:id', userController.removeUserById)
+userRouter.post('/auth/signUp', UserController.signUp)
+userRouter.post('/auth/signIn', UserController.signIn)
+userRouter.get('/:id', UserController.getUserById)
+userRouter.put('/:id', UserController.editUserById)
+userRouter.delete('/:id', UserController.removeUserById)
 
 export default userRouter;

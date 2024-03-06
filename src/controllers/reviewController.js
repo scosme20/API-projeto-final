@@ -1,8 +1,8 @@
 import Review from "../models/Review.js";
 
-export default class ReviewController {
+class ReviewController {
 
-    static async addReview(req, res) {
+    static async createReview(req, res) {
         const { rating, comment, UserId, CompanyId } = req.body;
 
         if ( !rating || !comment || !UserId || !CompanyId) {
@@ -33,23 +33,28 @@ export default class ReviewController {
     static async getReviewById(req, res) {
         const id = req.params.id;
 
-        console.log(id)
-
         if (!id) {
             res.status(422).json({ message: 'O id é obrigatório!' });
             return;
         }
 
+        const review = await Review.findByPk(id);
+
+        if(!review){
+            res.status(404).json({ message: 'A avaliação não encontrada!' });
+            return;
+        }
+
         try {
-            const review = await Review.findByPk(id);
 
             res.status(200).json({ review });
+            
         } catch (error) {
             res.status(500).json({ message: error });
         }
     }
 
-    static async editReview(req, res) {
+    static async editReviewById(req, res) {
         const id = req.params.id;
         const { rating, comment } = req.body;
 
@@ -95,3 +100,5 @@ export default class ReviewController {
     }
 
 }
+
+export default ReviewController;

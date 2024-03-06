@@ -2,12 +2,12 @@ import User from "../models/User.js";
 import bcrypt from "bcrypt"
 import Review from "../models/Review.js";
 
-export default class userController {
+class UserController {
 
     // "static" é usado para poder ter acesso ao método do classe sem precisar instanciar a classe.
     // se não tivesse o "static", seria necessário instanciar. exemplo: const instancia = new userController(), instancia.login
     // nesse caso posso chamar: userController.login, sem instanciar.
-    static async login(req, res){
+    static async signIn(req, res){
         const { email, password} = req.body
 
         if(!email || !password){
@@ -38,7 +38,7 @@ export default class userController {
 
     }
 
-    static async register(req, res){
+    static async signUp(req, res){
         const { name, email, password, confirmpassword } = req.body
 
         if(!name || !email || !password || !confirmpassword){
@@ -118,7 +118,7 @@ export default class userController {
         }
     }
 
-    static async edit(req, res){
+    static async editUserById(req, res){
 
         const id = req.params.id
 
@@ -187,3 +187,4 @@ export default class userController {
 
 }
 
+export default UserController;
