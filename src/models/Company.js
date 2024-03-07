@@ -18,6 +18,11 @@ const Company = db.define('Company', {
         defaultValue: 0,
         allowNull: false,
     },
+    productQty: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+        allowNull: false,
+    },
     name: {
         type: DataTypes.STRING,
         allowNull: false

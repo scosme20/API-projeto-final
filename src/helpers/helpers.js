@@ -2,4 +2,6 @@ const hideUserPassword = ({ id, name, email, createdAt, updatedAt }) => ({ id, n
 
 const hideCompanyPassword = ({ id, name, email, category, rating, createdAt, updatedAt }) => ({ id, name, email, category, rating, createdAt, updatedAt });
 
-export { hideUserPassword, hideCompanyPassword }
+const calculateRating = (allRatings) => allRatings.reduce( (acc, review) => acc + review.rating, 0 ) / allRatings.length;
+
+export { hideUserPassword, hideCompanyPassword, calculateRating }

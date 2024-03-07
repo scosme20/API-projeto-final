@@ -2,7 +2,7 @@ import Company from '../models/Company.js'
 import bcrypt from "bcrypt"
 import Review from '../models/Review.js'
 import Product from '../models/Product.js'
-import { hideCompanyPassword } from '../helpers/helpers.js'
+import { calculateRating, hideCompanyPassword } from '../helpers/helpers.js'
 import { Op } from 'sequelize'
 
 class CompanyController {
@@ -87,21 +87,22 @@ class CompanyController {
         }
 
         try {
-            const companiesData = await Company.findAll({
+            const companies = await Company.findAll({
                 attributes: {exclude: ['password', 'email']},
-                include: Review,
+                include: [Review, Product],
                 where: {
                     name: {[Op.like]: `%${search}%`}
                 }
             })
 
-            const companies = companiesData.map(company => {
-                const eachCompany = company.get({plain:true})
-                if(eachCompany.Reviews.length){
-                    eachCompany.rating = eachCompany.Reviews.reduce((acc, review) => acc + review.rating, 0) / eachCompany.Reviews.length
+            companies.forEach(company => {
+                if(company.Reviews.length){
+                    company.rating = calculateRating(company.Reviews)
                 }
 
-                return eachCompany
+                if(company.Products.length){
+                    company.productQty = company.Products.length
+                }
             })
 
 
@@ -121,12 +122,16 @@ class CompanyController {
             });
             
             if(!company){
-                res.status(422).json({ message: 'Nenhuma empresa foi localizada!'})
+                res.status(404).json({ message: 'Não foi possivel localizar esta empresa!'})
                 return 
             }
 
             if(company.Reviews.length){
-                company.rating = company.Reviews.reduce((acc, review) => acc + review.rating, 0) / company.Reviews.length
+                company.rating = calculateRating(company.Reviews)
+            }
+
+            if(company.Products.length){
+                company.productQty = company.Products.length
             }
     
             res.status(200).json({ company })

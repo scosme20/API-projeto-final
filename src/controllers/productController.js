@@ -2,6 +2,7 @@ import Product  from "../models/Product.js";
 import Company from "../models/Company.js";
 import { Op } from "sequelize";
 import Review from "../models/Review.js";
+import { calculateRating } from "../helpers/helpers.js";
 
 class ProductController {
 
@@ -47,11 +48,11 @@ class ProductController {
         }
 
         try {
-            const productsData = await Product.findAll({
+            const products = await Product.findAll({
                 include: {
                     model: Company,
                     attributes: {exclude: ['password', 'email']},
-                    include: Review
+                    include: [Review, Product]
                 },
                 where: {
                     title: {[Op.like]: `%${search}%`}
@@ -59,18 +60,19 @@ class ProductController {
                 order: [['price', order]]
             }); 
 
-            const products = productsData.map(product => {
-                const eachProduct = product.get({plain: true})
-                eachProduct.Company.rating = eachProduct.Company.Reviews.reduce( (acc, review) => acc + review.rating, 0 ) / eachProduct.Company.Reviews.length
-                
-                return eachProduct
+            products.forEach(product => {
+                if(product.Company.Reviews.length){
+                    product.Company.rating = calculateRating(product.Company.Reviews)
+                }
+
+                if(product.Company.Reviews.length){
+                    product.Company.productQty = product.Company.Products.length
+                }
             })
 
             
 
-            res.status(200).json({
-                products
-            })
+            res.status(200).json({products})
         } catch (error) {
             res.status(500).json({ message: "Ocorreu um erro ao obter os produtos, por favor, tente novamente mais tarde." })
         }
@@ -81,12 +83,30 @@ class ProductController {
 
         try {
             
-            const product = await Product.findByPk(id);
+            const product = await Product.findByPk(id, {
+                include: {
+                    model: Company,
+                    attributes: {
+                        exclude: ['password', 'email']
+                    },
+                    include: [Review, Product]
+                }
+            })
 
             if(!product) {
-                res.status(422).json({ message: 'Esse produto não foi encontrado!' });
+                res.status(404).json({ message: 'Não foi possível localizar este produto!' });
                 return;
             }
+
+            if(product.Company.Reviews.length){
+                product.Company.rating = calculateRating(product.Company.Reviews)
+            }
+
+
+            if(product.Company.Products.length){
+                product.Company.productQty = product.Company.Products.length
+            }
+
             res.status(200).json({ product });
         } catch (error) {
             res.status(500).json({ message: "Ocorreu um erro ao obter esse produto, por favor, tente novamente mais tarde." });
