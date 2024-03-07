@@ -1,0 +1,37 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "version": "0.0.1",
+        "title": "GrocerySearch",
+        "description":"nada",
+        "contact": {
+            "name": "meu nome"
+        }
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000",
+            "description": "Local server"
+        }
+    ],
+    "schemes": ["http"],
+    "path": {
+        "/users/{:id}": {
+            "get":{
+                "description": "Retorna o usuário através do ID passado como parâmetro.",
+                "operationId": "usuario",
+                "parameters": [{
+                    "name": "id",
+                    "in":"param",
+                    "description":"ID do usuário"
+                }
+            ],
+            "responses":{
+                "200": {
+                    
+                }
+            }
+            }
+        }
+    }
+}
