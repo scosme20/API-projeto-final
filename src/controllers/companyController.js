@@ -3,6 +3,7 @@ import bcrypt from "bcrypt"
 import Review from '../models/Review.js'
 import Product from '../models/Product.js'
 import { hideCompanyPassword } from '../helpers/helpers.js'
+import { Op } from 'sequelize'
 
 class CompanyController {
 
@@ -75,6 +76,39 @@ class CompanyController {
 
 
         
+    }
+
+    static async getAllCompanies(req, res){
+
+        let search = ''
+
+        if(req.query.search){
+            search = req.query.search
+        }
+
+        try {
+            const companiesData = await Company.findAll({
+                attributes: {exclude: ['password', 'email']},
+                include: Review,
+                where: {
+                    name: {[Op.like]: `%${search}%`}
+                }
+            })
+
+            const companies = companiesData.map(company => {
+                const eachCompany = company.get({plain:true})
+                if(eachCompany.Reviews.length){
+                    eachCompany.rating = eachCompany.Reviews.reduce((acc, review) => acc + review.rating, 0) / eachCompany.Reviews.length
+                }
+
+                return eachCompany
+            })
+
+
+            res.status(200).json({companies})
+        } catch (error) {
+            res.status(500).json({ message: "Ocorreu um erro ao obter todas as empresas, por favor, tente novamente mais tarde." })
+        }
     }
 
     static async getCompanyById(req, res){

@@ -21,7 +21,7 @@ class ReviewController {
 
             res.status(201).json({ createdReview });
         } catch (error) {
-            res.status(500).json({ message: "Ocorreu um erro a criar a avaliação, por favor, tente novamente mais tarde." });
+            res.status(500).json({ message: "Ocorreu um erro ao criar a avaliação, por favor, tente novamente mais tarde." });
         }
     }
 

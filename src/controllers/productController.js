@@ -1,6 +1,7 @@
 import Product  from "../models/Product.js";
 import Company from "../models/Company.js";
 import { Op } from "sequelize";
+import Review from "../models/Review.js";
 
 class ProductController {
 
@@ -46,16 +47,27 @@ class ProductController {
         }
 
         try {
-            const products = await Product.findAll({
+            const productsData = await Product.findAll({
                 include: {
                     model: Company,
-                    attributes: {exclude: ['password', 'email']}
+                    attributes: {exclude: ['password', 'email']},
+                    include: Review
                 },
                 where: {
                     title: {[Op.like]: `%${search}%`}
                 },
                 order: [['price', order]]
             }); 
+
+            const products = productsData.map(product => {
+                const eachProduct = product.get({plain: true})
+                eachProduct.Company.rating = eachProduct.Company.Reviews.reduce( (acc, review) => acc + review.rating, 0 ) / eachProduct.Company.Reviews.length
+                
+                return eachProduct
+            })
+
+            
+
             res.status(200).json({
                 products
             })
